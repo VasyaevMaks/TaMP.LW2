@@ -1,0 +1,193 @@
+В связи с непредвиденными обстоятельствами(поломка ноутбука) лабораторная работа была выполнена в краткие сроки без фиксации изменений в программе.
+Готовая программа имеет следующий вид:
+1. Заголовочный модуль:
+#pragma once
+#include <string> 
+using namespace std;
+class Cesar
+{
+private:
+	string m, M, output;
+	int key;
+	const int alph = 26;	
+	
+public:
+	string Preparation_For_Encript(string m);
+	string Before_Decription(string m);
+	string Shift_For_Encript(string M, int key);
+	string Shift_For_Decript(string M, int key);
+	Cesar(const int key){}
+};
+2. Главный модуль(отвечает за реализацию графического интерфейса и вызов методов класса Cesar):
+#include "Cesar.h"
+#include <iostream> 
+#include <string> 
+#include <exception> 
+#include <cctype> 
+#include <Windows.h> 
+using namespace std;
+int main()
+{
+	SetConsoleCP(1251);
+	int key;
+	string m, output, M;
+	const int alph = 26;
+	int ans;
+	cout << "Enter the key: ";
+	try {
+	cin >> key;
+	if ((key <= 0) | (key >= alph))
+	{
+		throw 1;
+	}
+	cout << "Enter tne message: ";
+	cin.ignore();
+	getline(cin, m);
+	cout << "If you want to encrypt, enter 1" << endl;
+	cout << "If you want to decrypt, enter 2" << endl;
+	
+		cin >> ans;
+		Cesar x(key);
+	
+		if (ans == 1)
+		{
+			M = x.Preparation_For_Encript(m);
+			output = x.Shift_For_Encript(M, key);
+		}
+
+		if (ans == 2)
+		{
+			M = x.Before_Decription(m);
+			output = x.Shift_For_Decript(M, key);
+		}			
+		cout << output << endl;
+		if ((!(ans == 1)) && (!(ans == 2)))
+		{
+			throw 2;
+		}
+	}
+	catch (int err)
+	{
+		if (err == 1)
+		{
+			cerr << "Weaked Key!" << endl;
+			return 1;
+		}
+		else
+			if (err == 2)
+			{
+				cerr << "Wrong ans!" << endl;
+				return 2;
+			}
+			else
+				if (err == 3)
+				{
+					cerr << "Incorrect symbol" << endl;
+					return 3;
+				}
+				else
+					if (err = 4)
+					{
+						cerr << "Fake data" << endl;
+						return 4;
+					}
+	}
+	return 0;
+}
+3. Модуль Cesar(отвечает за реализацию зашифрования/расшифрования текста):
+#include "Cesar.h"
+#include <iostream> 
+#include <string> 
+#include <exception> 
+#include <cctype> 
+using namespace std;
+string Cesar::Preparation_For_Encript(string m)
+{
+	string M;
+		for (auto c:m)
+		{
+			if ((c >= 'А') && (c <= 'я') | (c <= 'Ё')|(c<='ё'))
+			{
+				throw 3;
+			}
+			else
+			if (islower(c))
+			{
+				M += toupper(c);
+			}
+			else if (isupper(c))
+				{
+				M += c;
+				}
+
+			else if (isspace(c) || ispunct(c))
+			{
+				continue;
+			}
+
+			else
+				{
+					throw 3;
+				}
+				
+		}
+		return M;
+	}
+	string Cesar::Before_Decription(string m)
+	{
+		string M;
+		for(auto c: m)
+		{
+			if (isupper(c))
+			{
+				 M += c;
+			}
+			else
+			{
+				throw 4;
+			}
+		
+		}
+		return M;
+	}
+	string Cesar::Shift_For_Encript(string M, int key)
+	{
+		string res;
+		int a = alph;
+		int i = 0;
+		for(auto c:M)
+		{
+			if (c + key <= 'Z')
+			{
+				res += c + key;
+			}
+			else
+			{
+				res += c - (a - key);
+			}
+			i++;
+		}
+		return string(res);
+	}
+
+string Cesar::Shift_For_Decript(string M, int key)
+	{
+	
+		string res;
+		int a = alph;
+	
+		int i = 0;
+		for (auto c:M)
+		{
+			if (c - key >= 'A')
+			{
+				res += c - key;
+			}
+			else
+			{
+				res += c + (a - key);
+			}
+			i++;
+		}
+		return string(res);
+	}
